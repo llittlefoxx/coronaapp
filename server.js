@@ -54,39 +54,43 @@ const checkAppointments1 = () => {
     });
 }
 
-    const checkAppointments2 = () => {
-        checkBalance();
-        request({
-            headers: {
-                'Content-Type': 'application/json',
-                'Connection': 'keep-alive',
-                'Authorization': 'Basic OldQODYtQk5aQy1SVURQ',
-            },
-            uri: 'https://002-iz.impfterminservice.de/rest/suche/impfterminsuche?plz=76287',
-            method: 'GET'
-        }, function (err, res, body) {
-            //it works!node 
-            console.log("Body-> s2 " + res.body);
-            console.log("ERR-> " + err);
-            if (err === null && res.body !== "401 Unauthorized" && res.body.toString().length >= 0) {
-                const result = JSON.parse(res.body);
-                const termine = result.termine;
-                const termineTSS = result.termineTSS;
-                const praxen = result.praxen;
-                if (termine.length !== 0 || termineTSS.length !== 0 || Object.keys(praxen).length !== 0) {
-                    sendSms("found an appointment something, " + termine.toString().substring(0, 150));
-                    clearInterval(checkInterval2);
-                } else {
-                    console.log("No appointments yet");
-                }
-            } else {
-                sendSms("Error happened");
+const checkAppointments2 = () => {
+    checkBalance();
+    request({
+        headers: {
+            'Content-Type': 'application/json',
+            'Connection': 'keep-alive',
+            'Authorization': 'Basic OldQODYtQk5aQy1SVURQ',
+        },
+        uri: 'https://002-iz.impfterminservice.de/rest/suche/impfterminsuche?plz=76287',
+        method: 'GET'
+    }, function (err, res, body) {
+        //it works!node 
+        console.log("Body-> s2 " + res.body);
+        console.log("ERR-> " + err);
+        if (err === null && res.body !== "401 Unauthorized" && res.body.toString().length >= 0) {
+            const result = JSON.parse(res.body);
+            const termine = result.termine;
+            const termineTSS = result.termineTSS;
+            const praxen = result.praxen;
+            if (termine.length !== 0 || termineTSS.length !== 0 || Object.keys(praxen).length !== 0) {
+                sendSms("found an appointment something, " + termine.toString().substring(0, 150));
                 clearInterval(checkInterval2);
-                console.log(err)
+            } else {
+                console.log("No appointments yet");
             }
-    
-        });
+        } else {
+            sendSms("Error happened");
+            clearInterval(checkInterval2);
+            console.log(err)
+        }
+
+    });
 
 }
-checkInterval1 = setInterval(checkAppointments1, 2500);
-checkInterval2 = setInterval(checkAppointments2, 3000);
+try {
+    checkInterval1 = setInterval(checkAppointments1, 2500);
+    checkInterval2 = setInterval(checkAppointments2, 3400);
+} catch (error) {
+    console.log("ERROR HAPPENED", error)
+}
