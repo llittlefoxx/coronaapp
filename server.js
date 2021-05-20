@@ -1,6 +1,6 @@
 var querystring = require('querystring');
 const request = require('request');
-
+var globalThis = require('globalthis')();
 globalThis.fetch = require('node-fetch').default; // uncomment in NodeJS environments
 const Sms77Client = require('sms77-client'); // uncomment in NodeJS environments
 const smsClient = new Sms77Client("x2hAPX6YY6HG6uBpe3ebBwvP5F6YnxVIHEfHhPEJSs3eobmXK6E5MxfcezKjYRvn")
