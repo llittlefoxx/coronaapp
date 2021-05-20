@@ -14,7 +14,7 @@ const http = require('http');
 
 const startDate = new Date().toDateString();;
 const hostname = '0.0.0.0';
-const port = 80;
+const port = 8080;
 
 
 const sendSms = (smsText) => {
