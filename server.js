@@ -88,9 +88,12 @@ const checkAppointments2 = () => {
     });
 
 }
+const calls = ()=>{
+    checkAppointments1();
+    checkAppointments2();
+}
 try {
-    checkInterval1 = setInterval(checkAppointments1, 2500);
-    checkInterval2 = setInterval(checkAppointments2, 3400);
+    checkInterval1 = setInterval(calls, 3000);
 } catch (error) {
     console.log("ERROR HAPPENED", error)
 }
