@@ -5,6 +5,18 @@ globalThis.fetch = require('node-fetch').default; // uncomment in NodeJS environ
 const Sms77Client = require('sms77-client'); // uncomment in NodeJS environments
 const smsClient = new Sms77Client("x2hAPX6YY6HG6uBpe3ebBwvP5F6YnxVIHEfHhPEJSs3eobmXK6E5MxfcezKjYRvn")
 let checkInterval;
+let foundAppointment = false;
+let i = 0;
+
+let status = "Running";
+
+const http = require('http');
+
+const startDate = new Date().toDateString();;
+const hostname = '127.0.0.1';
+const port = 3000;
+
+
 const sendSms = (smsText) => {
     return smsClient.sms({ from: "myCoronaApp", to: "004917635260384", text: smsText }).then(response => console.log(response)).catch(console.error);
 }
@@ -41,6 +53,7 @@ const checkAppointments1 = () => {
             const praxen = result.praxen;
             if (termine.length !== 0 || termineTSS.length !== 0 || Object.keys(praxen).length !== 0) {
                 sendSms("found an appointment something, " + termine.toString().substring(0, 150));
+                foundAppointment = true;
                 clearInterval(checkInterval1);
             } else {
                 console.log("No appointments yet");
@@ -74,6 +87,7 @@ const checkAppointments2 = () => {
             const termineTSS = result.termineTSS;
             const praxen = result.praxen;
             if (termine.length !== 0 || termineTSS.length !== 0 || Object.keys(praxen).length !== 0) {
+                foundAppointment = true;
                 sendSms("found an appointment something, " + termine.toString().substring(0, 150));
                 clearInterval(checkInterval2);
             } else {
@@ -88,7 +102,8 @@ const checkAppointments2 = () => {
     });
 
 }
-const calls = ()=>{
+const calls = () => {
+    i++;
     checkAppointments1();
     checkAppointments2();
 }
@@ -97,3 +112,14 @@ try {
 } catch (error) {
     console.log("ERROR HAPPENED", error)
 }
+
+const server = http.createServer((req, res) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+
+    res.end("requests made :" + i.toString() + " since " + startDate + " ////// Found somethis? " + (foundAppointment ? "YES!!!!" : "NOOOO"));
+});
+
+server.listen(port, hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}/`);
+});
