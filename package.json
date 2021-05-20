@@ -1,0 +1,1 @@
+{"name":"converted","version":"1.0.0","description":"","author":"","license":"ISC","dependencies":{"node-fetch":"2.6.1","querystring":"0.2.1","request":"2.81.0","sms77-client":"2.11.1"}}
