@@ -13,8 +13,8 @@ let status = "Running";
 const http = require('http');
 
 const startDate = new Date().toDateString();;
-const hostname = '127.0.0.1';
-const port = 3000;
+const hostname = '0.0.0.0';
+const port = 8080;
 
 
 const sendSms = (smsText) => {
