@@ -135,25 +135,29 @@ const checkAppointments1 = () => {
         method: 'GET'
     }, function (err, res, body) {
         //it works!node 
-        console.log("Body-> s1" + res?.body);
-        console.log("ERR-> " + err);
-        if (err === null &&  res && res.body !== "401 Unauthorized" && res.body.toString().length >= 0) {
-            const result = JSON.parse(res.body);
-            const termine = result.termine;
-            const termineTSS = result.termineTSS;
-            const praxen = result.praxen;
-            if (termine.length !== 0 || termineTSS.length !== 0 || Object.keys(praxen).length !== 0) {
-                sendSms("found an appointment something, " + termine.toString().substring(0, 150));
-                foundAppointment = true;
-                clearInterval(checkinterval);
+        
+        if (typeof res !== 'undefined') {
+            console.log("Body-> s1" + res.body);
+            console.log("ERR-> " + err);
+            if (err === null && res && res.body !== "401 Unauthorized" && res.body.toString().length >= 0) {
+                const result = JSON.parse(res.body);
+                const termine = result.termine;
+                const termineTSS = result.termineTSS;
+                const praxen = result.praxen;
+                if (termine.length !== 0 || termineTSS.length !== 0 || Object.keys(praxen).length !== 0) {
+                    sendSms("found an appointment something, " + termine.toString().substring(0, 150));
+                    foundAppointment = true;
+                    clearInterval(checkinterval);
+                } else {
+                    console.log("No appointments yet");
+                }
             } else {
-                console.log("No appointments yet");
+                sendSms("Error happened");
+                clearInterval(checkinterval);
+                console.log(err)
             }
-        } else {
-            sendSms("Error happened");
-            clearInterval(checkinterval);
-            console.log(err)
         }
+      
 
     });
 }
@@ -170,25 +174,28 @@ const checkAppointments2 = () => {
         method: 'GET'
     }, function (err, res, body) {
         //it works!node 
-        console.log("Body-> s2 " + res?.body);
-        console.log("ERR-> " + err);
-        if (err === null && res && res.body !== "401 Unauthorized" && res.body.toString().length >= 0) {
-            const result = JSON.parse(res.body);
-            const termine = result.termine;
-            const termineTSS = result.termineTSS;
-            const praxen = result.praxen;
-            if (termine.length !== 0 || termineTSS.length !== 0 || Object.keys(praxen).length !== 0) {
-                foundAppointment = true;
-                sendSms("found an appointment something, " + termine.toString().substring(0, 150));
-                clearInterval(checkinterval);
+        if (typeof res !== 'undefined') {
+            console.log("Body-> s2 " + res.body);
+            console.log("ERR-> " + err);
+            if (err === null && res && res.body !== "401 Unauthorized" && res.body.toString().length >= 0) {
+                const result = JSON.parse(res.body);
+                const termine = result.termine;
+                const termineTSS = result.termineTSS;
+                const praxen = result.praxen;
+                if (termine.length !== 0 || termineTSS.length !== 0 || Object.keys(praxen).length !== 0) {
+                    foundAppointment = true;
+                    sendSms("found an appointment something, " + termine.toString().substring(0, 150));
+                    clearInterval(checkinterval);
+                } else {
+                    console.log("No appointments yet");
+                }
             } else {
-                console.log("No appointments yet");
+                sendSms("Error happened");
+                clearInterval(checkinterval);
+                console.log(err)
             }
-        } else {
-            sendSms("Error happened");
-            clearInterval(checkinterval);
-            console.log(err)
         }
+
 
     });
 
