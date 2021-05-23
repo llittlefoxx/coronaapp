@@ -7,6 +7,7 @@ const smsApi = require('./smsApi');
 const http = require('http');
 const { JSON } = require('globalthis/implementation');
 const { console } = require('globalthis/implementation');
+let checkinterval;
 
 const startDate = new Date().toDateString();
 let foundAppointment = false;
@@ -14,7 +15,7 @@ let i = 0;
 
 const checkCodes = () => {
     smsApi.checkBalance();
-    configuration.plzs.forEach(plz => {
+    configuration.myPlzs.forEach(plz => {
         console.log("Testing location -> ", plz)
         request({
             headers: configuration.requestHeaders,
@@ -23,7 +24,7 @@ const checkCodes = () => {
         }, function (err, res, body) {
 
             if (typeof res !== 'undefined') {
-                console.log("Body -> " + res.body);
+                console.log("Body -> plz " + plz + " " + res.body);
                 console.log("ERR -> " + err);
                 if (err === null && res && res.body !== "401 Unauthorized" && res.body.toString().length >= 0) {
                     const result = JSON.parse(res.body);
@@ -31,26 +32,73 @@ const checkCodes = () => {
                     const termineTSS = result.termineTSS;
                     const praxen = result.praxen;
                     if (termine.length !== 0 || termineTSS.length !== 0 || Object.keys(praxen).length !== 0) {
-                        smsApi.sendSms("Termin in, PLZ: " + plz + " " + termine.toString().substring(0, 150));
-                        foundAppointment = true;
-                        clearInterval(checkinterval);
+                        if (configuration.myPlzs.includes(plz)) {
+                            smsApi.sendSms("Termin in, PLZ: " + plz + " " + termine.toString().substring(0, 150));
+                            console.log("Termin in, PLZ: " + plz + " " + termine.toString().substring(0, 150));
+                            foundAppointment = true;
+                            clearInterval(checkinterval);
+                        } else {
+                            // send email
+                        }
                     } else {
                         console.log("No appointments yet");
                     }
                 } else {
                     smsApi.sendSms("Error happened");
+                    console.log("Error happened");
                     clearInterval(checkinterval);
                     console.log(err)
                 }
             }
         });
     })
-
 }
 
+const checkCodesAreas = () => {
+    smsApi.checkBalance();
+    configuration.plzs.forEach(plz => {
+        console.log("Testing location -> ", plz)
+        request({
+            headers: configuration.requestHeaders,
+            uri: configuration.codeCheckApiUrl(plz),
+            method: 'GET'
+        }, function (err, res, body) {
+
+            if (typeof res !== 'undefined') {
+                console.log("Body -> plz " + plz + " " + res.body);
+                console.log("ERR -> " + err);
+                if (err === null && res && res.body !== "401 Unauthorized" && res.body.toString().length >= 0) {
+                    const result = JSON.parse(res.body);
+                    console.log("RS " + res.body);
+                    /*   const termine = result.termine;
+                       const termineTSS = result.termineTSS;
+                       const praxen = result.praxen;
+                       if (termine.length !== 0 || termineTSS.length !== 0 || Object.keys(praxen).length !== 0) {
+                           if (configuration.myPlzs.includes(plz)) {
+                               //smsApi.sendSms("Termin in, PLZ: " + plz + " " + termine.toString().substring(0, 150));
+                               console.log("Termin in, PLZ: " + plz + " " + termine.toString().substring(0, 150));
+                               foundAppointment = true;
+                               clearInterval(checkinterval);
+                           } else {
+                               // send email
+                           }
+                       } else {
+                           console.log("No appointments yet");
+                       }*/
+                } else {
+                    //smsApi.sendSms("Error happened");
+                    console.log("Error happened");
+                    clearInterval(checkinterval);
+                    console.log(err)
+                }
+            }
+        });
+    })
+}
 const cron = () => {
     i++;
     checkCodes();
+    //checkCodesAreas();
 }
 
 try {
