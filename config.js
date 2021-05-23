@@ -2,11 +2,11 @@ module.exports = {
     config: {
         hostname: '0.0.0.0',
         port: 8080,
+        loopInterval: 8000,
         alertPhoneNumber: "004917635260384",
         appName: "My CoronaApp",
-        apiUrls: [
-            "https://002-iz.impfterminservice.de/rest/suche/impfterminsuche?plz=76287",
-            "https://002-iz.impfterminservice.de/rest/suche/impfterminsuche?plz=88367"],
+        myPlzs: ["76287", "88367"],
+        apiBaseUrl: "https://002-iz.impfterminservice.de/rest/suche/impfterminsuche?plz=",
         requestHeaders: {
             'Content-Type': 'application/json',
             'Connection': 'keep-alive',

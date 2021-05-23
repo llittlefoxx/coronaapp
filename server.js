@@ -14,11 +14,11 @@ let i = 0;
 
 const checkCodes = () => {
     smsApi.checkBalance();
-    configuration.apiUrls.forEach(url => {
-        console.log("Testing location -> ", url)
+    configuration.plzs.forEach(plz => {
+        console.log("Testing location -> ", plz)
         request({
             headers: configuration.requestHeaders,
-            uri: url,
+            uri: configuration.apiBaseUrl + plz,
             method: 'GET'
         }, function (err, res, body) {
 
@@ -31,14 +31,14 @@ const checkCodes = () => {
                     const termineTSS = result.termineTSS;
                     const praxen = result.praxen;
                     if (termine.length !== 0 || termineTSS.length !== 0 || Object.keys(praxen).length !== 0) {
-                        // smsApi.sendSms("found an appointment something, " + termine.toString().substring(0, 150));
+                        smsApi.sendSms("found an appointment something, " + termine.toString().substring(0, 150));
                         foundAppointment = true;
                         clearInterval(checkinterval);
                     } else {
                         console.log("No appointments yet");
                     }
                 } else {
-                    //  smsApi.sendSms("Error happened");
+                    smsApi.sendSms("Error happened");
                     clearInterval(checkinterval);
                     console.log(err)
                 }
@@ -64,7 +64,7 @@ try {
     server.listen(configuration.port, configuration.hostname, () => {
         console.log(`Server running at http://${configuration.hostname}:${configuration.port}/`);
     });
-    checkInterval = setInterval(cron, 3000);
+    checkInterval = setInterval(cron, configuration.loopInterval);
 } catch (error) {
     console.log("ERROR HAPPENED", error)
 }
