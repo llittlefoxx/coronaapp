@@ -31,7 +31,7 @@ const checkCodes = () => {
                     const termineTSS = result.termineTSS;
                     const praxen = result.praxen;
                     if (termine.length !== 0 || termineTSS.length !== 0 || Object.keys(praxen).length !== 0) {
-                        smsApi.sendSms("found an appointment something, " + termine.toString().substring(0, 150));
+                        smsApi.sendSms("Termin in, PLZ: " + plz + " " + termine.toString().substring(0, 150));
                         foundAppointment = true;
                         clearInterval(checkinterval);
                     } else {
